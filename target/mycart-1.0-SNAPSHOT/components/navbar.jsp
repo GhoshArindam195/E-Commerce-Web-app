@@ -37,6 +37,9 @@
 
         <ul class="navbar-nav ml-auto">
             <li class="nav-item">
+                <a  class="nav-link" id="cart-icon" href="#" data-toggle="modal" data-target="#cart-modal"><i id="cart-val">(0)</i><i class="fas fa-cart-arrow-down" style="font-size: 20px;"></i><span class="sr-only"></span></a>
+            </li>
+            <li class="nav-item">
                 <a class="nav-link" href="login.jsp">Login<span class="sr-only"></span></a>
             </li>
             <li class="nav-item">

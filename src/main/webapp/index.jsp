@@ -15,7 +15,11 @@
         <title>JSP Page</title>
     </head>
     <body>
+        <!--navbar-->
         <%@include file="components/navbar.jsp" %>
+        <!-- end of navbar-->
+
+        <!--Main body-->
         <div class="container-fluid mt-5">
             <div class="row">
 
@@ -38,9 +42,9 @@
                 <!--Category col-->
                 <div class="col-sm-2 mt-4">
                     <ul class="list-group">
-                        <a href="index.jsp" class="general list-group-item list-group-item-action <% if(cat==null){ %>active<% } %>">All Categories</a>
+                        <a href="index.jsp" class="general list-group-item list-group-item-action <% if (cat == null) { %>active<% } %>">All Categories</a>
                         <% for (Category cats : categories) {%>
-                        <a href="index.jsp?cId=<%= cats.getCategoryId()%>" class="general list-group-item list-group-item-action <% if(cat!=null && Integer.parseInt(cat)== cats.getCategoryId()){ %>active<% } %>" value="<%= cats.getCategoryId()%>"><%= cats.getCategoryTitile()%></a>
+                        <a href="index.jsp?cId=<%= cats.getCategoryId()%>" class="general list-group-item list-group-item-action <% if (cat != null && Integer.parseInt(cat) == cats.getCategoryId()) { %>active<% }%>" value="<%= cats.getCategoryId()%>"><%= cats.getCategoryTitile()%></a>
                         <% } %>
                     </ul>
                 </div>
@@ -64,14 +68,16 @@
                                     <div class="text-center">
                                         <img src="img/products/<%= prod.getpPhoto()%>" class="card-img-top img-fluid " style="height: 250px; width: auto;"></div>
                                     <div class="card-footer">
-                                        <button class="btn custom-bg text-light">Add to cart</button>
                                         <%
                                             int price = prod.getpPrice();
                                             int discount = prod.getpDiscount();
-                                            int effectivePrice = price-discount;
-                                            int percent = (int) ((double)discount/(double)price *100);
+                                            int effectivePrice = price - discount;
+                                            int percent = (int) ((double) discount / (double) price * 100);
+                                            int pId = prod.getpId();
+                                            String pName = prod.getpName();
                                         %>
-                                        <button class="btn btn-outline-primary m-1"><b>&#x20B9;<%= effectivePrice %></b> <span class="text-muted" style="text-decoration: line-through;">&#x20B9;<%= price %></span> <span class="text-success"><%= percent %>% off</span> </button>
+                                        <a href="#" class="btn custom-bg text-light" onclick="addToCart(<%= pId%>, '<%= pName%>', <%= effectivePrice%>)">Add to cart</a> 
+                                        <button class="btn btn-outline-primary m-1"><b>&#x20B9;<%= effectivePrice%></b> <span class="text-muted" style="text-decoration: line-through;">&#x20B9;<%= price%></span> <span class="text-success"><%= percent%>% off</span> </button>
                                     </div>
                                 </div>
                                 <% }
@@ -85,5 +91,42 @@
 
             </div>
         </div>
+        <!--end of Main body-->
+
+        <!--cart modal-->
+
+        <div class="modal fade" id="cart-modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <table class="table" id="cart-table">
+                            <thead class="custom-bg text-light">
+                                <tr>
+                                    <th scope="col">no.</th>
+                                    <th scope="col">Item name</th>
+                                    <th scope="col">Quantity</th>
+                                    <th scope="col">Price</th>
+                                    <th scope="col">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tBody">
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-danger" onclick="clearCart()">Clear cart</button>
+                        <a href="checkout.jsp" type="button" class="btn btn-success">Check out</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--end cart modal-->
     </body>
 </html>
