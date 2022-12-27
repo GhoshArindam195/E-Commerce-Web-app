@@ -99,7 +99,7 @@
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                        <h5 class="modal-title" id="exampleModalLabel">Your cart</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -121,7 +121,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-outline-danger" onclick="clearCart()">Clear cart</button>
-                        <a href="checkout.jsp" type="button" class="btn btn-success">Check out</a>
+                        <a href="#" type="button" class="btn btn-success" id="check-out">Check out</a>
                     </div>
                 </div>
             </div>

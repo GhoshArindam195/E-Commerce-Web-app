@@ -7,7 +7,11 @@
         <title>Login | MyCart</title>
     </head>
     <body>
+        <!--navbar-->
         <%@include file="components/navbar.jsp" %><br><br>
+        <!--navbar ends-->
+        
+        <!--Main body-->
         <div class="container-fluid mt-5">
             <div class="row">
                 <div class="col-sm-4 offset-sm-4">
@@ -37,5 +41,42 @@
                 </div>
             </div>
         </div>
+        <!--Main body ends-->
+
+        <!--cart modal-->
+
+        <div class="modal fade" id="cart-modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Your cart</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <table class="table" id="cart-table">
+                            <thead class="custom-bg text-light">
+                                <tr>
+                                    <th scope="col">no.</th>
+                                    <th scope="col">Item name</th>
+                                    <th scope="col">Quantity</th>
+                                    <th scope="col">Price</th>
+                                    <th scope="col">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tBody">
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-danger" onclick="clearCart()">Clear cart</button>
+                        <a href="#" type="button" class="btn btn-success" id="check-out">Check out</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--end cart modal-->
     </body>
 </html>

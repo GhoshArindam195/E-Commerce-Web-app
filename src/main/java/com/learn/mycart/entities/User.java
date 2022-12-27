@@ -1,11 +1,14 @@
 
 package com.learn.mycart.entities;
 
+import java.util.ArrayList;
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 
 @Entity
 public class User 
@@ -35,9 +38,12 @@ public class User
     
     @Column(length = 100, name = "user_Type")
     private String userType;
+    
+    @OneToMany(mappedBy = "user")
+    private List<Receipt> receipts = new ArrayList<>();
 
     //constructor including id
-    public User(int userId, String userName, String userEmail, String userPassword, String userPhone, String userPic, String userAddress, String userType) {
+    public User(int userId, String userName, String userEmail, String userPassword, String userPhone, String userPic, String userAddress, String userType, List<Receipt> receipts) {
         this.userId = userId;
         this.userName = userName;
         this.userEmail = userEmail;
@@ -46,10 +52,19 @@ public class User
         this.userPic = userPic;
         this.userAddress = userAddress;
         this.userType = userType;
+        this.receipts = receipts;
+    }
+
+    public List<Receipt> getReceipts() {
+        return receipts;
+    }
+
+    public void setReceipts(List<Receipt> receipts) {
+        this.receipts = receipts;
     }
 
     //constructor excluding id
-    public User(String userName, String userEmail, String userPassword, String userPhone, String userPic, String userAddress, String userType) {
+    public User(String userName, String userEmail, String userPassword, String userPhone, String userPic, String userAddress, String userType, List<Receipt> receipts) {
         this.userName = userName;
         this.userEmail = userEmail;
         this.userPassword = userPassword;
@@ -57,6 +72,7 @@ public class User
         this.userPic = userPic;
         this.userAddress = userAddress;
         this.userType = userType;
+        this.receipts = receipts;
     }
 
     //default constructor

@@ -49,7 +49,7 @@ public class RegisterServlet extends HttpServlet {
                 
                 
                 //Creating User object
-                User user = new User(userName, userEmail, userPassword, userPhone, "default.jpg", userAddress, userType);
+                User user = new User(userName, userEmail, userPassword, userPhone, "default.jpg", userAddress, userType, null);
                 
                 //Saving user into DB
                 Session session = FactoryProvider.getFactory().openSession();

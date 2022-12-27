@@ -11,6 +11,9 @@
 <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
 
+<!--Razor Pay Script-->
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
 <!-- Font awesome cdn -->
 <script src="https://kit.fontawesome.com/b88c6e57bb.js" crossorigin="anonymous"></script>
 
@@ -42,6 +45,7 @@
 </style>
 
 
+
 <script>
     function clearCart()
     {
@@ -55,7 +59,7 @@
 
         let cartTable = document.getElementById('cart-table');
         let str = "";
-        str += ` <thead class="thead-dark">
+        str += ` <thead class="custom-bg text-light">
                                 <tr>
                                     <th scope="col">no.</th>
                                     <th scope="col">Item name</th>
@@ -70,15 +74,38 @@
 
         let cart = document.getElementById('cart-val');
         cart.innerHTML = '(' + 0 + ')';
+
+        //disable the check out button.....
+        let checkOut = document.getElementById('check-out');
+        checkOut.classList.add("disabled");
     }
 
     window.onload = function ()
     {
+        //landing on index page should clear the cart.................
+        if (window.location.href.length == 22 || window.location.href.includes('index.jsp'))
+        {
+            clearCart();
+        }
+
+        if (JSON.parse(localStorage.getItem('itemsJSON')).length == 0)
+        {
+            let checkOut = document.getElementById('check-out');
+            checkOut.classList.add("disabled");
+        } else
+        {
+            let checkOut = document.getElementById('check-out');
+            checkOut.classList.remove("disabled");
+        }
+
+
         let cart = document.getElementById('cart-val');
         let localStr = localStorage.getItem('itemsJSON');
+//        alert(localStr)
         if (localStr == null)
+        {
             cart.innerHTML = '(' + 0 + ')';
-        else
+        } else
         {
             itemsArray1 = JSON.parse(localStr);
             cart.innerHTML = '(' + itemsArray1.length + ')';
@@ -124,7 +151,10 @@
                     function (e)
                     {
                         if (e[0] == pId) {
+//                            e[3] += 1;
+                            let actualPrice = e[2] / e[3];
                             e[3] += 1;
+                            e[2] += actualPrice;
                             flg = false;
                         }
                     }
@@ -153,6 +183,10 @@
                           </tr>`;
         });
         tBody.innerHTML = str;
+
+//        enable the checkout button..................
+        let checkOut = document.getElementById('check-out');
+        checkOut.classList.remove("disabled");
     }
 
     function increase(pId)
@@ -235,7 +269,98 @@
 
     }
 
-    function removeItemById(pId) 
+
+    //Check out..................
+    $(document).on('click', '#check-out', function () {
+        //alert("clicked"); 
+
+        if (!window.location.href.includes('home.jsp'))
+        {
+            window.location.replace('http://localhost:9494/login.jsp');
+        }
+
+        let itemsArray = [];
+        let localStr = localStorage.getItem('itemsJSON');
+//        console.log(localStr);
+        itemsArray = JSON.parse(localStr);
+
+        total_amount = 0;
+        itemsArray.forEach(
+                function (e)
+                {
+//                    console.log(e)
+                    total_amount += e[2];
+                }
+        )
+        const d = {
+            amount: total_amount,
+            items: localStr
+        }
+        $.ajax(
+                {
+                    url: "createOrderServlet",
+                    //data: d,
+                    
+                    //contentType: 'application/json',  //ContentType specifies the datatype of our data which we're passing to server
+                    type: 'POST',
+                    dataType: 'json', //dataType: specifies the datatype of the data which we're getting as response from server
+                    data: d,
+                    success: function (response, textStatus, jqXHR) {
+
+                        if (response.status == "created")
+                        {
+//                            open payment form.....................
+                            let options = {
+                                "key": "rzp_test_PcZtcdZRiGnBtK",
+                                "amount": response.amount,
+                                "currency": "INR",
+                                "name": "Test",
+                                "description": "Test",
+                                "order_id": response.id,
+                                "handler": function (response) {
+                                    alert(response.razorpay_payment_id);
+                                    alert(response.razorpay_order_id);
+                                    alert(response.razorpay_signature);
+                                    alert("Payment Successfull");
+
+                                },
+                                "prefill": {
+                                    "name": "A G",
+                                    "email": "arindam.ghosh@example.com",
+                                    "contact": "7001290785"
+                                },
+                                "notes": {
+                                    "address": "Razorpay Testing"
+                                },
+                                "theme": {
+                                    "color": "#3399cc"
+                                }
+
+                            };
+                            let rzp = new Razorpay(options);
+                            rzp.on('payment.failed', function (response) {
+                                alert(response.error.code);
+                                alert(response.error.description);
+                                alert(response.error.source);
+                                alert(response.error.step);
+                                alert(response.error.reason);
+                                alert(response.error.metadata.order_id);
+                                alert(response.error.metadata.payment_id);
+                            });
+                            rzp.open();
+                        }
+                    },
+                    error: function (errorData, textStatus, errorThrown) {
+                        console.log(errorData)
+                    }
+                }
+        )
+
+
+
+    });
+
+    function removeItemById(pId)
     {
         let itemsArray = [];
         let localStr = localStorage.getItem('itemsJSON');
@@ -271,5 +396,11 @@
 
         let cart = document.getElementById('cart-val');
         cart.innerHTML = '(' + itemsArray.length + ')';
+
+        //after removing every item from cart, check if it was the last item
+        if (itemsArray.length == 0)
+        {
+            clearCart();
+        }
     }
 </script>
